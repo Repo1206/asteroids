@@ -19,7 +19,7 @@ class Player {
 
     c.beginPath();
     c.arc(this.position.x, this.position.y, 5, 0, Math.PI * 2, false);
-    c.fillStyle = "red";
+
     c.fill();
     c.closePath();
 
