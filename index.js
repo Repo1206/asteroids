@@ -372,11 +372,11 @@ function animate() {
           collisionSound.play();
 
           breakAsteroid(asteroid); // Call the function to break the asteroid into smaller pieces
-          asteroids.splice(i, 1); // Remove the original asteroid
-          projectiles.splice(j, 1); // Remove the projectile
+          asteroids.splice(i, 1); // Removed the original asteroid
+          projectiles.splice(j, 1); // Removed the projectile
           // Calculate the score based on the size of the asteroid
           const asteroidSize = asteroid.radius;
-          const asteroidMultiplier = Math.ceil(asteroidSize / 20); // You can adjust the multiplier as desired
+          const asteroidMultiplier = Math.ceil(asteroidSize / 20); // adjusted the multiplier as desired
           const points = 5 * asteroidMultiplier; // Base score of 5 points per asteroid, multiplied by the size multiplier
 
           // Increment the score with the calculated points
