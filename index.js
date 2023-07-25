@@ -156,7 +156,7 @@ window.setInterval(() => {
   let ANGLE = Math.random() * Math.PI * 2; // Random angle in radians
   let ASTEROID_SPEED =
     ASTEROID_MIN_SPEED +
-    Math.random() * (ASTEROID_MAX_SPEED - ASTEROID_MIN_SPEED); // Random speed within the specified range
+    Math.floor(Math.random() * (ASTEROID_MAX_SPEED - ASTEROID_MIN_SPEED)); // Random speed within the specified range
 
   switch (index) {
     case 0: //left side of the screen
@@ -205,6 +205,46 @@ window.setInterval(() => {
   console.log(asteroids);
 }, 2000);
 
+function circleCollision(circle1, circle2) {
+  const xDifference = circle2.position.x - circle1.position.x;
+  const yDifference = circle2.position.y - circle1.position.y;
+
+  const distance = Math.sqrt(
+    xDifference * xDifference + yDifference * yDifference
+  );
+
+  if (distance <= circle1.radius + circle2.radius) {
+    console.log("two have collided");
+    return true;
+  }
+  return false;
+}
+
+// Function to break an asteroid into smaller pieces
+function breakAsteroid(asteroid) {
+  const numPieces = Math.floor(Math.random() * 3) + 2; // Random number of pieces (2 to 4)
+
+  for (let i = 0; i < numPieces; i++) {
+    const smallerRadius = asteroid.radius * (Math.random() * 0.4 + 0.2); // Random size for smaller pieces
+    const smallerVelocity = {
+      x: (Math.random() - 0.5) * 2, // Random x and y velocity between -1 and 1
+      y: (Math.random() - 0.5) * 2,
+    };
+
+    if (smallerRadius >= 8) {
+      // Only create smaller pieces above a certain size (e.g., 15)
+      // Create a smaller asteroid
+      const smallerAsteroid = new Asteroid({
+        position: { x: asteroid.position.x, y: asteroid.position.y },
+        velocity: smallerVelocity,
+        radius: smallerRadius,
+      });
+
+      asteroids.push(smallerAsteroid); // Add the smaller asteroid to the asteroids array
+    }
+  }
+}
+
 function animate() {
   window.requestAnimationFrame(animate);
   c.fillStyle = "black";
@@ -238,6 +278,28 @@ function animate() {
       asteroid.position.y + asteroid.radius < 0
     ) {
       asteroids.splice(i, 1);
+    }
+    // projectiles
+    for (let j = projectiles.length - 1; j >= 0; j--) {
+      const projectile = projectiles[j];
+
+      for (let i = asteroids.length - 1; i >= 0; i--) {
+        const asteroid = asteroids[i];
+
+        if (circleCollision(asteroid, projectile)) {
+          console.log("Asteroid hit!");
+
+          // Play the collision sound
+          const collisionSound = document.getElementById("collisionSound");
+          collisionSound.currentTime = 0; // Reset the audio to the beginning
+          collisionSound.play();
+
+          breakAsteroid(asteroid); // Call the function to break the asteroid into smaller pieces
+          asteroids.splice(i, 1); // Remove the original asteroid
+          projectiles.splice(j, 1); // Remove the projectile
+          break; // Exit the loop since the asteroid is already hit by a projectile
+        }
+      }
     }
   }
 
